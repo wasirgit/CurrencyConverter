@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        android:dialogTitle="@string/add_new_currency"
+        android:icon="@android:drawable/ic_input_add"
+        android:inputType="number"
+        android:summary="@string/add_currency_summary"
+        app:key="addNewCurrencyKey"
+        app:title="@string/add_new_currency">
+
+    </EditTextPreference>
+    <EditTextPreference
+        android:dialogTitle="@string/update_commission_title"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:inputType="numberDecimal"
+        android:summary="@string/update_commission_summary"
+        app:key="updateCommission"
+        app:title="@string/update_commission">
+
+    </EditTextPreference>
+
+    <EditTextPreference
+        android:dialogTitle="@string/update_sync_time"
+        android:inputType="numberDecimal"
+        android:summary="@string/sync_time_summary"
+        app:key="updateSyncTime"
+        app:title="@string/update_time_title">
+
+    </EditTextPreference>
+    <PreferenceCategory android:title="basic_preferences">
+
+        <Preference
+            android:key="preference"
+            android:summary="summary_basic_preference"
+            android:title="title_basic_preference" />
+
+        <Preference
+            android:key="stylized"
+            android:summary="summary_stylish_preference"
+            android:title="title_stylish_preference" />
+
+        <Preference
+            android:icon="@android:drawable/ic_menu_camera"
+            android:key="icon"
+            android:summary="summary_icon_preference"
+            android:title="title_icon_preference" />
+
+        <Preference
+            android:key="single_line_title"
+            android:summary="summary_single_line_title_preference"
+            android:title="title_single_line_title_preference"
+            app:singleLineTitle="true" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="widgets">
+
+        <CheckBoxPreference
+            android:key="checkbox"
+            android:summary="summary_checkbox_preference"
+            android:title="title_checkbox_preference" />
+
+        <SwitchPreferenceCompat
+            android:key="switch"
+            android:summary="summary_switch_preference"
+            android:title="title_switch_preference" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

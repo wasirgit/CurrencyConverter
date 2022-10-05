@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_navigation"
+    app:startDestination="@+id/currencyFragment">
+
+    <fragment
+        android:id="@+id/currencyFragment"
+        android:name="com.wasir.droid.currencyexchange.presentation.convert.fragments.CurrencyExchangeFragment"
+        android:label="CurrencyExchangeFragment"
+        tools:layout="@layout/currency_exchange_fragment_layout" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.wasir.droid.currencyexchange.presentation.convert.fragments.SettingsFragment"
+        android:label="SettingsFragment" />
+</navigation>

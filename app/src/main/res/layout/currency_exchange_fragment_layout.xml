@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolBar"
+            style="@style/ToolBarStyle.Event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:gravity="center_horizontal"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                style="@style/TextAppearance.Widget.Event.Toolbar.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:text="@string/app_name" />
+
+            <ImageView
+                android:id="@+id/settingBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:layout_marginEnd="@dimen/dp10"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/dp10"
+                app:srcCompat="@drawable/ic_setting" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <TextView
+            android:id="@+id/myBalanceTv"
+            style="@style/Text.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/my_balances"
+            android:textAllCaps="true"
+            android:textColor="@color/grey"
+            app:layout_constraintTop_toBottomOf="@+id/toolBar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/accountRv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/myBalanceTv" />
+
+        <TextView
+            android:id="@+id/currencyExchangeTv"
+            style="@style/Text.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            android:text="@string/currency_exchange"
+            android:textAllCaps="true"
+            android:textColor="@color/grey"
+            app:layout_constraintTop_toBottomOf="@+id/accountRv" />
+
+        <FrameLayout
+            android:id="@+id/sellItemFl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintTop_toBottomOf="@+id/currencyExchangeTv">
+
+            <include
+                android:id="@+id/sellItem"
+                layout="@layout/sell_layout_item" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/receiveItemFl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/standard_margin"
+            app:layout_constraintTop_toBottomOf="@+id/sellItemFl">
+
+            <include
+                android:id="@+id/receiveItem"
+                layout="@layout/receive_layout_item" />
+
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/submitBtn"
+            style="@style/ButtonStyleSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="40dp"
+            android:minWidth="150dp"
+            android:text="@string/submit"
+            android:textAllCaps="true"
+            app:layout_constraintTop_toBottomOf="@+id/receiveItemFl" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>
