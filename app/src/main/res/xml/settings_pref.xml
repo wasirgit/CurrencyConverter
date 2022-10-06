@@ -23,49 +23,41 @@
 
     <EditTextPreference
         android:dialogTitle="@string/update_sync_time"
+        android:icon="@android:drawable/ic_popup_sync"
         android:inputType="numberDecimal"
         android:summary="@string/sync_time_summary"
         app:key="updateSyncTime"
         app:title="@string/update_time_title">
 
     </EditTextPreference>
-    <PreferenceCategory android:title="basic_preferences">
+    <EditTextPreference
+        android:dialogTitle="Enter total number of free conversion"
+        android:icon="@android:drawable/ic_menu_add"
+        android:inputType="number"
+        android:summary="if you enter 10, then first 10 conversion will be free of cost"
+        app:key="updateTotalNumOfFreeConversion"
+        app:title="Total number of free conversion">
 
-        <Preference
-            android:key="preference"
-            android:summary="summary_basic_preference"
-            android:title="title_basic_preference" />
+    </EditTextPreference>
 
-        <Preference
-            android:key="stylized"
-            android:summary="summary_stylish_preference"
-            android:title="title_stylish_preference" />
+    <EditTextPreference
+        android:dialogTitle="Enter max amount for free conversion"
+        android:icon="@android:drawable/ic_menu_add"
+        android:inputType="number"
+        android:summary="if you enter 500, conversion up to 500 will be free of cost"
+        app:key="updateMaxFreeAmount"
+        app:title="Max amount for free conversion">
 
-        <Preference
-            android:icon="@android:drawable/ic_menu_camera"
-            android:key="icon"
-            android:summary="summary_icon_preference"
-            android:title="title_icon_preference" />
+    </EditTextPreference>
 
-        <Preference
-            android:key="single_line_title"
-            android:summary="summary_single_line_title_preference"
-            android:title="title_single_line_title_preference"
-            app:singleLineTitle="true" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="widgets">
+    <EditTextPreference
+        android:dialogTitle="Enter every nth conversion position"
+        android:icon="@android:drawable/ic_menu_add"
+        android:inputType="number"
+        android:summary="Please enter position of conversion. Eg-  if you enter 10 then every 10th conversion will be free"
+        app:key="updateConversionPosition"
+        app:title="Enter every nth conversion position">
 
-        <CheckBoxPreference
-            android:key="checkbox"
-            android:summary="summary_checkbox_preference"
-            android:title="title_checkbox_preference" />
-
-        <SwitchPreferenceCompat
-            android:key="switch"
-            android:summary="summary_switch_preference"
-            android:title="title_switch_preference" />
-
-    </PreferenceCategory>
-
+    </EditTextPreference>
 
 </PreferenceScreen>

@@ -1,9 +1,6 @@
 package com.wasir.droid.currencyexchange.data.database.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.wasir.droid.currencyexchange.data.database.entity.AccountEntity
 import com.wasir.droid.currencyexchange.data.database.entity.ConfigEntity
 import com.wasir.droid.currencyexchange.data.database.entity.CurrencyRateEntity
@@ -40,8 +37,20 @@ interface CurrencyExchangeDao {
     fun isCurrencyExists(currencyCode: String): Boolean
 
     @Query("UPDATE config SET commission =:updatedCommission")
-    suspend fun updateCommission(updatedCommission: Double):Int
+    suspend fun updateCommission(updatedCommission: Double): Int
 
     @Query("UPDATE config SET syncTime =:updatedTimeInSec")
-    suspend fun updateSyncTime(updatedTimeInSec: Int):Int
+    suspend fun updateSyncTime(updatedTimeInSec: Int): Int
+
+    @Query("UPDATE config SET every_nth_conversion_free =:freeConversionPosition")
+    suspend fun updateFreeConversionPosition(freeConversionPosition: Int): Int
+
+    @Query("UPDATE config SET max_free_amount =:maxFreeAmount")
+    suspend fun updateMaxFreeAmount(maxFreeAmount: Double): Int
+
+    @Query("UPDATE config SET total_free_conversion =:totalNumber")
+    suspend fun updateNumberOfFreeConversion(totalNumber: Int): Int
+    @Update
+    suspend fun updateConfig(config: ConfigEntity)
+
 }

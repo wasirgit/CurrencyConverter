@@ -26,11 +26,6 @@ class SettingsViewModel @Inject constructor(
         MutableStateFlow<Resource<Boolean>>(Resource.Loading())
     val updateCommissionStateFlow = _updateCommissionStateFlow.asStateFlow()
 
-
-    private val _updateSyncTimeStateFlow =
-        MutableStateFlow<Resource<Boolean>>(Resource.Loading())
-    val updateSyncTimeStateFlow = _updateSyncTimeStateFlow.asStateFlow()
-
     fun addCurrency(currency: String) {
         viewModelScope.launch(dispatcherProvider.IO()) {
             settingsUseCase.addCurrency(currency)
@@ -69,22 +64,28 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun updateSyncTimeCommission(updatedTimeInSec: Int) {
+    fun updateSyncTime(updatedTimeInSec: Int) {
         viewModelScope.launch(dispatcherProvider.IO()) {
-            settingsUseCase.updateSyncTimeCommission(updatedTimeInSec)
-                .onEach { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            _updateCommissionStateFlow.value = Resource.Success(result.data)
-                        }
-                        is Resource.Error -> {
-                            _updateCommissionStateFlow.value = Resource.Error(result.message)
-                        }
-                        is Resource.Loading -> {
-                            _updateCommissionStateFlow.value = Resource.Loading(null)
-                        }
-                    }
-                }.launchIn(this)
+            settingsUseCase.updateSyncTime(updatedTimeInSec)
+                .launchIn(this)
+        }
+    }
+    fun updateFreeConversionPosition(freeConversionPosition: Int) {
+        viewModelScope.launch(dispatcherProvider.IO()) {
+            settingsUseCase.updateFreeConversionPosition(freeConversionPosition)
+                .launchIn(this)
+        }
+    }
+    fun updateMaxFreeAmount(maxFreeAmount: Double) {
+        viewModelScope.launch(dispatcherProvider.IO()) {
+            settingsUseCase.updateMaxFreeAmount(maxFreeAmount)
+                .launchIn(this)
+        }
+    }
+    fun updateNumberOfFreeConversion(totalNumber: Int) {
+        viewModelScope.launch(dispatcherProvider.IO()) {
+            settingsUseCase.updateNumberOfFreeConversion(totalNumber)
+                .launchIn(this)
         }
     }
 }

@@ -15,12 +15,10 @@ import androidx.preference.PreferenceFragmentCompat
 import com.wasir.droid.currencyexchange.R
 import com.wasir.droid.currencyexchange.databinding.FragmentSettingsBinding
 import com.wasir.droid.currencyexchange.presentation.convert.viewmodels.SettingsViewModel
-import com.wasir.droid.currencyexchange.utils.AppConfig
 import com.wasir.droid.currencyexchange.utils.Resource
 import com.wasir.droid.currencyexchange.utils.SnackFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -29,8 +27,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var binding: FragmentSettingsBinding
     private val viewModel: SettingsViewModel by viewModels()
 
-    @Inject
-    lateinit var appConfig: AppConfig
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_pref, rootKey)
     }
@@ -57,9 +53,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val addCurrencyEditText: EditTextPreference? = findPreference("addNewCurrencyKey")
         addCurrencyEditText?.setDefaultValue("")
 
-        addCurrencyEditText?.setOnPreferenceChangeListener { preference, newValue ->
+        addCurrencyEditText?.setOnPreferenceChangeListener { _, newValue ->
             if (newValue.toString().isNotEmpty())
-                viewModel.addCurrency(newValue.toString())
+                viewModel.addCurrency(newValue.toString().uppercase())
 
             true
         }
@@ -68,7 +64,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updateCommissionEditText?.setOnBindEditTextListener { editText ->
             editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         }
-        updateCommissionEditText?.setOnPreferenceChangeListener { preference, newValue ->
+        updateCommissionEditText?.setOnPreferenceChangeListener { _, newValue ->
             if (newValue.toString().isNotEmpty())
                 try {
                     viewModel.updateCommission(newValue.toString().toDouble())
@@ -86,8 +82,49 @@ class SettingsFragment : PreferenceFragmentCompat() {
         updateSyncTimeEditText?.setOnBindEditTextListener { editText ->
             editText.inputType = InputType.TYPE_CLASS_NUMBER
         }
-        updateSyncTimeEditText?.setOnPreferenceChangeListener { preference, newValue ->
+        updateSyncTimeEditText?.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue.toString().isNotEmpty()) {
+                viewModel.updateSyncTime(newValue.toString().trim().toInt())
+            }
+            true
+        }
 
+        val updateConversionPositionEditText: EditTextPreference? =
+            findPreference("updateConversionPosition")
+        updateConversionPositionEditText?.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER
+        }
+
+        updateConversionPositionEditText?.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue.toString().isNotEmpty()) {
+                viewModel.updateFreeConversionPosition(newValue.toString().trim().toInt())
+            }
+            true
+        }
+
+        val updateMaxFreeAmountEditText: EditTextPreference? =
+            findPreference("updateMaxFreeAmount")
+        updateMaxFreeAmountEditText?.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+
+        updateMaxFreeAmountEditText?.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue.toString().isNotEmpty()) {
+                viewModel.updateMaxFreeAmount(newValue.toString().trim().toDouble())
+            }
+            true
+        }
+
+        val numberOfFreeConversionEditText: EditTextPreference? =
+            findPreference("updateTotalNumOfFreeConversion")
+        numberOfFreeConversionEditText?.setOnBindEditTextListener { editText ->
+            editText.inputType = InputType.TYPE_CLASS_NUMBER
+        }
+
+        numberOfFreeConversionEditText?.setOnPreferenceChangeListener { _, newValue ->
+            if (newValue.toString().isNotEmpty()) {
+                viewModel.updateMaxFreeAmount(newValue.toString().trim().toDouble())
+            }
             true
         }
     }

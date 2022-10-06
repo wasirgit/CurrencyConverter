@@ -23,5 +23,6 @@
     <string name="update_sync_time">Update Sync Time (In Second)</string>
     <string name="sync_time_summary">Update rate data sync time. Default value is 5 sec</string>
     <string name="update_time_title">Update Sync Time (In Second)</string>
+    <string name="enter_free_total_conversion">Enter free total conversion</string>
 
 </resources>

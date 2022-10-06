@@ -3,7 +3,8 @@ package com.wasir.droid.currencyexchange.di.module
 import android.content.Context
 import android.text.InputFilter
 import com.wasir.droid.currencyexchange.App
-import com.wasir.droid.currencyexchange.utils.AppConfig
+import com.wasir.droid.currencyexchange.data.scheduler.AppConfigSync
+import com.wasir.droid.currencyexchange.domain.repository.ConfigurationRepo
 import com.wasir.droid.currencyexchange.utils.DecimalLimiter
 import com.wasir.droid.currencyexchange.utils.FormatUtils
 import dagger.Module
@@ -28,20 +29,21 @@ class AppModule {
         return arrayOf<InputFilter>(decimalLimiter)
     }
 
-
-    @Provides
-    @Singleton
-    fun provideAppConfig(): AppConfig {
-        return AppConfig()
-    }
     @Provides
     @Singleton
     fun provideFormatUtils(): FormatUtils {
         return FormatUtils()
     }
+
     @Provides
     @ApplicationContext
-    fun provideApplicationContext(  @ApplicationContext context: Context): App {
+    fun provideApplicationContext(@ApplicationContext context: Context): App {
         return context.applicationContext as App
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppConfigAndScheduler(configurationRepo: ConfigurationRepo): AppConfigSync {
+        return AppConfigSync(configurationRepo)
     }
 }
