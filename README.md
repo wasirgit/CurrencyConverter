@@ -43,10 +43,13 @@ Following table will be created during app installation for first time
     - commission  - *How much commission will be charge. Default value is 0.7. You can update it from settings screen.*
     - syncTime - *How frequently API will be called. Default value is 5 seconds. You can update it from settings screen*
 
+Project screens
+![](project-preview/first_screen.png)
+![](project-preview/settings_screen.png)
 
 # Project Code structure
 I have used MVVM- Clean architecture pattern. I have included project diagram in **project-preview** folder in root directory of the project. 
-
+![](project-preview/project_architecture_diagram.jpg)
 
 
  
