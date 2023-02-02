@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +11,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wasir.droid.currencyexchange.R
+import com.wasir.droid.currencyexchange.common.FormatUtils
+import com.wasir.droid.currencyexchange.common.Resource
+import com.wasir.droid.currencyexchange.common.SnackFactory
+import com.wasir.droid.currencyexchange.common.clickWithDebounce
 import com.wasir.droid.currencyexchange.data.model.Account
 import com.wasir.droid.currencyexchange.data.scheduler.AppConfigSync
 import com.wasir.droid.currencyexchange.databinding.CurrencyExchangeFragmentLayoutBinding
@@ -22,11 +25,8 @@ import com.wasir.droid.currencyexchange.presentation.convert.adapter.AccountsAda
 import com.wasir.droid.currencyexchange.presentation.convert.viewmodels.CurrencyExchangeViewModel
 import com.wasir.droid.currencyexchange.presentation.dialogs.ConversionSimpleDialog
 import com.wasir.droid.currencyexchange.presentation.dialogs.CurrencyChooseDialog
-import com.wasir.droid.currencyexchange.utils.FormatUtils
-import com.wasir.droid.currencyexchange.utils.Resource
-import com.wasir.droid.currencyexchange.utils.SnackFactory
-import com.wasir.droid.currencyexchange.utils.clickWithDebounce
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.wasir.android.dev.presentation.base.BaseFragment
 import javax.inject.Inject
@@ -63,6 +63,8 @@ class CurrencyExchangeFragment : BaseFragment() {
         if (binding == null) {
             binding = CurrencyExchangeFragmentLayoutBinding.inflate(layoutInflater)
             subscribeDataStream()
+
+
         }
         return binding?.root
     }
@@ -73,20 +75,28 @@ class CurrencyExchangeFragment : BaseFragment() {
         setUpRecyclerView()
         viewModel.getAccounts()
         viewModel.getCurrencyList()
-        Log.d(
-            TAG,
-            "onViewCreated: $viewModel"
-        )
     }
 
     private fun setupUI() {
         binding?.sellItem?.sellCurrencyTv?.text = viewModel.base
         binding?.receiveItem?.receiveCurrencyTv?.text = viewModel.symbols
         binding?.sellItem?.amountET?.filters = inputFilter
+        val initialSellAmount: Double? =
+            binding?.sellItem?.amountET?.text?.toString()?.trim()?.length?.toDouble()
+        val initialReceiveAmount: Double? =
+            binding?.receiveItem?.exchangedAmountTv?.text?.toString()?.trim()?.length?.toDouble()
+
+        if (initialSellAmount != null && initialReceiveAmount != null) {
+            binding?.submitBtn?.isEnabled = initialSellAmount > 0 && initialReceiveAmount > 0
+        } else {
+            binding?.submitBtn?.isEnabled = false
+        }
+
         binding?.sellItem?.sellCurrencyTv?.clickWithDebounce {
             currencies?.let {
+                val sellCurrencies = it.toMutableList()
                 CurrencyChooseDialog.CurrencyChooseDialogBuilder(requireContext())
-                    .setCurrencies(currencyList = it as MutableList<String>)
+                    .setCurrencies(currencyList = sellCurrencies)
                     .setTitle(requireContext().getString(R.string.choose_currency))
                     .setCurrencySelectListener(sellCurrencySelectListener)
                     .build()
@@ -95,27 +105,43 @@ class CurrencyExchangeFragment : BaseFragment() {
         binding?.sellItem?.amountET?.addTextChangedListener(addTextChangedListener)
 
         binding?.receiveItem?.receiveCurrencyTv?.clickWithDebounce {
+
             currencies?.let {
+                val receiveCurrencies = it.toMutableList()
                 CurrencyChooseDialog.CurrencyChooseDialogBuilder(requireContext())
-                    .setCurrencies(currencyList = it as MutableList<String>)
+                    .setCurrencies(currencyList = receiveCurrencies)
                     .setTitle(requireContext().getString(R.string.choose_currency))
                     .setCurrencySelectListener(receiveCurrencySelectListener)
                     .build()
             }
         }
         binding?.submitBtn?.clickWithDebounce {
-            if (binding?.sellItem?.amountET?.text.toString().trim().isNotEmpty()) {
-                val sellAmount = binding?.sellItem?.amountET?.text.toString().toDouble()
-                viewModel.convertCurrency(
-                    sellAmount,
-                    viewModel.base,
-                    viewModel.symbols
+            if (viewModel.symbols.equals(viewModel.base, ignoreCase = true)) {
+                SnackFactory.showError(
+                    getContentView(),
+                    getString(R.string.receiver_same_currency_error)
                 )
+            } else {
+                if (binding?.sellItem?.amountET?.text.toString().trim().isNotEmpty()) {
+                    val sellAmount = binding?.sellItem?.amountET?.text.toString().toDouble()
+                    viewModel.convertCurrency(
+                        sellAmount,
+                        viewModel.base,
+                        viewModel.symbols
+                    )
+                }
             }
         }
         binding?.settingBtn?.clickWithDebounce {
-            Navigation.findNavController(binding!!.root).navigate(R.id.settingsFragment)
+            findNavController().navigate(
+                CurrencyExchangeFragmentDirections.actionCurrencyFragmentToSettingsFragment()
+            )
+
         }
+    }
+
+    fun resetInputField() {
+        binding?.sellItem?.amountET?.text?.clear()
     }
 
     private val sellCurrencySelectListener =
@@ -131,6 +157,7 @@ class CurrencyExchangeFragment : BaseFragment() {
                         viewModel.symbols
                     )  // calculate if amount field has value during currency change
                 }
+
             }
         }
     private val receiveCurrencySelectListener =
@@ -159,7 +186,8 @@ class CurrencyExchangeFragment : BaseFragment() {
         }
 
         override fun afterTextChanged(p0: Editable?) {
-            if (p0.toString().trim().isNotEmpty()) {
+            if (isValidInput(p0.toString())
+            ) {
                 if (viewModel.base.isNotEmpty() && viewModel.symbols.isNotEmpty()) {
                     binding?.submitBtn?.isEnabled = true
                     calculateReceiverAmount(
@@ -175,8 +203,12 @@ class CurrencyExchangeFragment : BaseFragment() {
         }
     }
 
-    private fun getCurrencyList() {
-
+    fun isValidInput(input: String?): Boolean {
+        val inputNumber = input.toString().trim()
+        return inputNumber.isNotEmpty() && !inputNumber.equals(
+            ".",
+            ignoreCase = true
+        ) && inputNumber.toDouble() > 0
     }
 
     private fun setUpRecyclerView() {
@@ -229,17 +261,13 @@ class CurrencyExchangeFragment : BaseFragment() {
                                 data.data?.let {
                                     renderUser(it)
                                 }
-                                Log.d(TAG, "Success: ")
                             }
                             is Resource.Error -> {
                                 data.message?.let {
                                     SnackFactory.showError(getContentView(), it)
                                 }
-
-                                Log.d(TAG, "Error: ")
                             }
                             is Resource.Loading -> {
-                                Log.d(TAG, "Loading: ")
                             }
                         }
                     }
@@ -248,7 +276,6 @@ class CurrencyExchangeFragment : BaseFragment() {
                     viewModel.receiverAmountStateFlow.collect { data ->
                         when (data) {
                             is Resource.Success -> {
-                                Log.d(TAG, "Success: ${data.data}")
                                 data.data?.let {
                                     binding?.receiveItem?.exchangedAmountTv?.text =
                                         formatUtils.formatAmountWithSign(it)
@@ -259,40 +286,46 @@ class CurrencyExchangeFragment : BaseFragment() {
                                 data.message?.let {
                                     SnackFactory.showError(getContentView(), it)
                                 }
-                                Log.d(TAG, "Error: ")
                             }
                             is Resource.Loading -> {
-                                Log.d(TAG, "Loading: ")
-                            }
-                        }
-                    }
-                }
-                launch {
-                    viewModel.convertStateFlow.collect { data ->
-                        when (data) {
-                            is Resource.Success -> {
-                                data.data?.let {
-                                    ConversionSimpleDialog.SimpleBuilder(requireContext())
-                                        .setTitle(getString(R.string.currency_converted))
-                                        .setMessage(it)
-                                        .build()
-                                }
-
-                            }
-                            is Resource.Error -> {
-                                data.message?.let {
-                                    SnackFactory.showError(getContentView(), it)
-                                }
-                                Log.d(TAG, "Error: ")
-                            }
-                            is Resource.Loading -> {
-                                Log.d(TAG, "Loading: ")
                             }
                         }
                     }
                 }
             }
         }
+
+        lifecycleScope.launchWhenStarted {
+            viewModel.convertStateFlow.collectLatest { data ->
+                when (data) {
+                    is Resource.Success -> {
+                        data.data?.let {
+                            viewModel.getAccounts()
+                            ConversionSimpleDialog.SimpleBuilder(requireContext())
+                                .setTitle(getString(R.string.currency_converted))
+                                .setMessage(it)
+                                .setListener(object : ConversionSimpleDialog.ClickOnSimpleDialog {
+                                    override fun onDismissDialog() {
+                                        resetInputField()
+                                    }
+
+                                })
+                                .build()
+                        }
+
+                    }
+                    is Resource.Error -> {
+                        data.message?.let {
+                            SnackFactory.showError(getContentView(), it)
+                        }
+                    }
+                    is Resource.Loading -> {
+
+                    }
+                }
+            }
+        }
+
     }
 
 }

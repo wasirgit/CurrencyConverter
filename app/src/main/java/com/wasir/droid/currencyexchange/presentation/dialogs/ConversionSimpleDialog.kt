@@ -5,14 +5,17 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
+import com.wasir.droid.currencyexchange.common.clickWithDebounce
 import com.wasir.droid.currencyexchange.databinding.SimpleDialogLayoutBinding
-import com.wasir.droid.currencyexchange.utils.clickWithDebounce
 
 class ConversionSimpleDialog private constructor(private val dialogBuilder: SimpleBuilder) {
     private var context: Context? = null
     private var alertDialog: AlertDialog? = null
     private var binding: SimpleDialogLayoutBinding
 
+    interface ClickOnSimpleDialog {
+        fun onDismissDialog()
+    }
 
     init {
         this.context = dialogBuilder.context
@@ -22,6 +25,7 @@ class ConversionSimpleDialog private constructor(private val dialogBuilder: Simp
         alertDialog?.setView(binding.root)
         alertDialog?.setCancelable(true)
         binding.doneBtn.clickWithDebounce {
+            dialogBuilder.clickOnSimpleDialog?.onDismissDialog()
             alertDialog?.dismiss()
         }
         alertDialog?.show()
@@ -38,6 +42,12 @@ class ConversionSimpleDialog private constructor(private val dialogBuilder: Simp
     class SimpleBuilder(val context: Context) {
         var dialogMessage: String? = null
         var dialogTitle: String? = null
+        var clickOnSimpleDialog: ClickOnSimpleDialog? = null
+
+        fun setListener(clickOnSimpleDialog: ClickOnSimpleDialog): SimpleBuilder {
+            this.clickOnSimpleDialog = clickOnSimpleDialog
+            return this
+        }
 
         fun setMessage(message: String): SimpleBuilder {
             this.dialogMessage = message

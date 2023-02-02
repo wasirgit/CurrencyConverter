@@ -7,7 +7,7 @@
     android:padding="@dimen/standard_margin">
 
     <TextView
-        android:id="@+id/myBalanceTv"
+        android:id="@+id/myBalanceAmountTv"
         style="@style/Text.body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp5"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/myBalanceTv"
+        app:layout_constraintStart_toEndOf="@+id/myBalanceAmountTv"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="EUR" />
 

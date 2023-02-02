@@ -19,7 +19,7 @@ class CurrencyChooseDialog private constructor(private val dialogBuilder: Curren
         alertDialogBuilder?.setTitle(dialogBuilder.dialogTitle)
         alertDialogBuilder?.setItems(
             dialogBuilder.currencyList
-        ) { p0, p1 ->
+        ) { _, p1 ->
             dialogBuilder.currencyList?.get(p1)?.let {
                 dialogBuilder.onCurrencyChangeLister?.onCurrencyChange(it)
             }

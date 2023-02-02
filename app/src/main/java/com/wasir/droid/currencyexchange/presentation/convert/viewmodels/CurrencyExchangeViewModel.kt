@@ -1,32 +1,29 @@
 package com.wasir.droid.currencyexchange.presentation.convert.viewmodels
 
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wasir.droid.currencyexchange.common.Resource
 import com.wasir.droid.currencyexchange.data.model.Account
-import com.wasir.droid.currencyexchange.domain.usecase.GetAccountUseCase
-import com.wasir.droid.currencyexchange.domain.usecase.GetExchangeUseCase
-import com.wasir.droid.currencyexchange.utils.Resource
+import com.wasir.droid.currencyexchange.domain.usecase.accounts.GetAccountUseCases
+import com.wasir.droid.currencyexchange.domain.usecase.exchange.GetExchangeUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import me.wasir.android.dev.data.networking.CoroutineDispatcherProvider
 import javax.inject.Inject
 
 @HiltViewModel
 class CurrencyExchangeViewModel @Inject constructor(
-    private val getAccountUseCase: GetAccountUseCase,
-    private val getExchangeUseCase: GetExchangeUseCase,
+    private val getAccountUseCases: GetAccountUseCases,
+    private val getExchangeUseCases: GetExchangeUseCases,
     private val dispatcherProvider: CoroutineDispatcherProvider
 ) : ViewModel() {
     private val TAG = "CEViewModel"
-    var base: String = "Select"
-    var symbols: String = "Select"
+    var base: String = "EUR"
+    var symbols: String = "USD"
 
-    private var rateByCurrencyJob: Job? = null
     private var calculateReceiverAmountJob: Job? = null
 
     private val _accountStateFlow = MutableStateFlow<Resource<List<Account>>>(Resource.Loading())
@@ -35,26 +32,26 @@ class CurrencyExchangeViewModel @Inject constructor(
     private val _currenciesStateFlow = MutableStateFlow<Resource<List<String>>>(Resource.Loading())
     val currenciesStateFlow = _currenciesStateFlow.asStateFlow()
 
-    private val _receiverAmountStateFlow = MutableStateFlow<Resource<Double>>(Resource.Loading())
-    val receiverAmountStateFlow = _receiverAmountStateFlow.asStateFlow()
+    private val _receiverAmountStateFlow = MutableSharedFlow<Resource<Double>>()
+    val receiverAmountStateFlow = _receiverAmountStateFlow.asSharedFlow()
 
-    private val _convertStateFlow = MutableStateFlow<Resource<String>>(Resource.Loading())
-    val convertStateFlow = _convertStateFlow.asStateFlow()
+    private val _convertStateFlow = MutableSharedFlow<Resource<String>>()
+    val convertStateFlow = _convertStateFlow.asSharedFlow()
 
 
     fun getAccounts() {
         viewModelScope.launch(dispatcherProvider.IO()) {
-            getAccountUseCase.getAccounts().onEach { result ->
+            getAccountUseCases.getAccounts().onEach { result ->
                 _accountStateFlow.value = result
-            }.launchIn(this)
+            }.launchIn(viewModelScope)
         }
     }
 
     fun getCurrencyList() {
         viewModelScope.launch(dispatcherProvider.IO()) {
-            getAccountUseCase.getCurrencyList().onEach { result ->
+            getAccountUseCases.getCurrencies().onEach { result ->
                 _currenciesStateFlow.value = result
-            }.launchIn(this)
+            }.launchIn(viewModelScope)
         }
     }
 
@@ -65,9 +62,9 @@ class CurrencyExchangeViewModel @Inject constructor(
     ) {
         calculateReceiverAmountJob?.cancel()
         calculateReceiverAmountJob = viewModelScope.launch(dispatcherProvider.IO()) {
-            getExchangeUseCase.getConvertedAmount(sellAmount, base, symbols).onEach { result ->
-                _receiverAmountStateFlow.value = result
-            }.launchIn(this)
+            getExchangeUseCases.getConvertedRate(sellAmount, base, symbols).onEach { result ->
+                _receiverAmountStateFlow.emit(result)
+            }.launchIn(viewModelScope)
         }
     }
 
@@ -77,13 +74,13 @@ class CurrencyExchangeViewModel @Inject constructor(
         receiveCurrency: String
     ) {
         viewModelScope.launch(dispatcherProvider.IO()) {
-            getExchangeUseCase.convertCurrency(
+            getExchangeUseCases.convertCurrency(
                 sellAmount,
                 sellCurrency,
                 receiveCurrency
             )
                 .onEach { result ->
-                    _convertStateFlow.value = result
+                    _convertStateFlow.emit(result)
                 }.launchIn(this)
         }
     }

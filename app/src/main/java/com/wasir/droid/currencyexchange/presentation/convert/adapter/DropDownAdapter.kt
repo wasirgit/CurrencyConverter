@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import com.wasir.droid.currencyexchange.R
-import com.wasir.droid.currencyexchange.data.model.DropdownItem
 
 class DropDownAdapter(private val items: List<String>) : BaseAdapter() {
 

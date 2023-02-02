@@ -2,7 +2,7 @@ package com.wasir.droid.currencyexchange.domain.repository
 
 import com.wasir.droid.currencyexchange.data.database.entity.ConfigEntity
 import com.wasir.droid.currencyexchange.data.database.entity.CurrencyRateEntity
-import com.wasir.droid.currencyexchange.utils.Resource
+import com.wasir.droid.currencyexchange.common.Resource
 import kotlinx.coroutines.flow.Flow
 
 

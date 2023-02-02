@@ -13,12 +13,14 @@ import androidx.navigation.Navigation
 import androidx.preference.EditTextPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.wasir.droid.currencyexchange.R
+import com.wasir.droid.currencyexchange.common.Resource
+import com.wasir.droid.currencyexchange.common.SnackFactory
+import com.wasir.droid.currencyexchange.data.scheduler.AppConfigSync
 import com.wasir.droid.currencyexchange.databinding.FragmentSettingsBinding
 import com.wasir.droid.currencyexchange.presentation.convert.viewmodels.SettingsViewModel
-import com.wasir.droid.currencyexchange.utils.Resource
-import com.wasir.droid.currencyexchange.utils.SnackFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -26,6 +28,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val TAG = "SettingsFragment"
     private lateinit var binding: FragmentSettingsBinding
     private val viewModel: SettingsViewModel by viewModels()
+
+    @Inject
+    lateinit var appConfig: AppConfigSync
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_pref, rootKey)
@@ -104,6 +109,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val updateMaxFreeAmountEditText: EditTextPreference? =
             findPreference("updateMaxFreeAmount")
+
         updateMaxFreeAmountEditText?.setOnBindEditTextListener { editText ->
             editText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         }
@@ -117,13 +123,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val numberOfFreeConversionEditText: EditTextPreference? =
             findPreference("updateTotalNumOfFreeConversion")
+
         numberOfFreeConversionEditText?.setOnBindEditTextListener { editText ->
             editText.inputType = InputType.TYPE_CLASS_NUMBER
         }
 
         numberOfFreeConversionEditText?.setOnPreferenceChangeListener { _, newValue ->
             if (newValue.toString().isNotEmpty()) {
-                viewModel.updateMaxFreeAmount(newValue.toString().trim().toDouble())
+                viewModel.updateNumberOfFreeConversion(newValue.toString().trim().toInt())
             }
             true
         }

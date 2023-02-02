@@ -2,7 +2,8 @@ package com.wasir.droid.currencyexchange.data.networking.exception
 
 import android.content.Context
 import com.wasir.droid.currencyexchange.R
-import com.wasir.droid.currencyexchange.utils.ConnectionUtil
+import com.wasir.droid.currencyexchange.common.ConnectionUtil.getNoConnectionMessage
+import com.wasir.droid.currencyexchange.common.ConnectionUtil.isNetworkAvailable
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -14,7 +15,7 @@ class ApiError(
     private val message: String? = null,
     private val errorDescription: String? = null,
     private val errorCodeKey: String? = null
-) : ConnectionUtil() {
+)  {
 
     fun auditError(e: Exception): String {
         return auditNetworkFailure(e)

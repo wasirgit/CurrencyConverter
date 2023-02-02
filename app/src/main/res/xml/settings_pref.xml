@@ -25,7 +25,7 @@
         android:dialogTitle="@string/update_sync_time"
         android:icon="@android:drawable/ic_popup_sync"
         android:inputType="numberDecimal"
-        android:summary="@string/sync_time_summary"
+        android:summary="Initial value is 5 sec"
         app:key="updateSyncTime"
         app:title="@string/update_time_title">
 
@@ -34,7 +34,7 @@
         android:dialogTitle="Enter total number of free conversion"
         android:icon="@android:drawable/ic_menu_add"
         android:inputType="number"
-        android:summary="if you enter 10, then first 10 conversion will be free of cost"
+        android:summary="Initial value is 5"
         app:key="updateTotalNumOfFreeConversion"
         app:title="Total number of free conversion">
 
@@ -44,7 +44,7 @@
         android:dialogTitle="Enter max amount for free conversion"
         android:icon="@android:drawable/ic_menu_add"
         android:inputType="number"
-        android:summary="if you enter 500, conversion up to 500 will be free of cost"
+        android:summary="if you enter 200, conversion up to 200 will be free of cost. Default value is 0"
         app:key="updateMaxFreeAmount"
         app:title="Max amount for free conversion">
 
@@ -54,7 +54,7 @@
         android:dialogTitle="Enter every nth conversion position"
         android:icon="@android:drawable/ic_menu_add"
         android:inputType="number"
-        android:summary="Please enter position of conversion. Eg-  if you enter 10 then every 10th conversion will be free"
+        android:summary="if you enter 10 then every 10th conversion will be free. Initial value is 0"
         app:key="updateConversionPosition"
         app:title="Enter every nth conversion position">
 

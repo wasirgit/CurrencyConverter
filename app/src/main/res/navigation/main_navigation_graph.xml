@@ -9,7 +9,11 @@
         android:id="@+id/currencyFragment"
         android:name="com.wasir.droid.currencyexchange.presentation.convert.fragments.CurrencyExchangeFragment"
         android:label="CurrencyExchangeFragment"
-        tools:layout="@layout/currency_exchange_fragment_layout" />
+        tools:layout="@layout/currency_exchange_fragment_layout" >
+        <action
+            android:id="@+id/action_currencyFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.wasir.droid.currencyexchange.presentation.convert.fragments.SettingsFragment"

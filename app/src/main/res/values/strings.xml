@@ -13,7 +13,7 @@
     <string name="add_new_currency">Add new currency</string>
     <string name="add_currency_summary">Click here to add currency</string>
     <string name="update_commission">Update Commission</string>
-    <string name="update_commission_summary">Click here to update commission</string>
+    <string name="update_commission_summary">Initial commission is 0.70 percent</string>
     <string name="update_commission_title">Update commission</string>
     <string name="choose_currency">Choose Currency</string>
     <string name="invalid_input_error">Please valid input</string>
@@ -21,8 +21,11 @@
     <string name="currency_add_success_message">Currency added successfully</string>
     <string name="currency_converted">Currency converted</string>
     <string name="update_sync_time">Update Sync Time (In Second)</string>
-    <string name="sync_time_summary">Update rate data sync time. Default value is 5 sec</string>
+    <string name="sync_time_summary">Default value is 5 sec</string>
     <string name="update_time_title">Update Sync Time (In Second)</string>
     <string name="enter_free_total_conversion">Enter free total conversion</string>
+    <string name="receiver_same_currency_error">Receiver currency should be different from sell currency</string>
+    <string name="same_sell_currency_error">Sell currency should be different from receiver currency</string>
+    <string name="balance_cannot_fall_below_zero">Balance can\'t fall below zero</string>
 
 </resources>

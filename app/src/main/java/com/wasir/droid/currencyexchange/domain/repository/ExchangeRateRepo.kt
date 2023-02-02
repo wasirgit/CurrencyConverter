@@ -1,10 +1,9 @@
 package com.wasir.droid.currencyexchange.domain.repository
 
-import com.wasir.droid.currencyexchange.utils.Resource
+import com.wasir.droid.currencyexchange.common.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface ExchangeRateRepo {
-    suspend fun loadConfiguration(): Flow<Resource<String>>
     suspend fun calculateReceiverAmount(
         sellAmount: Double,
         base: String,

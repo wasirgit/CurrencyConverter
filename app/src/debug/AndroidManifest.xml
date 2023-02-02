@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.wasir.droid.currencyexchange">
+
+    <application android:allowBackup="true">
+
+        <activity
+            android:name="com.wasir.droid.currencyexchange.HiltTestActivity"
+            android:exported="true"
+            android:supportsRtl="true">
+
+        </activity>
+
+    </application>
+
+</manifest>

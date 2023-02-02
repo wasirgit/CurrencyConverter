@@ -16,7 +16,6 @@ data class CurrencyRateResponse(
             }
         }
 
-
         return null
     }
 }

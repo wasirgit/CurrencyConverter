@@ -2,7 +2,6 @@ package com.wasir.droid.currencyexchange.data.scheduler
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import com.wasir.droid.currencyexchange.data.database.entity.ConfigEntity
 import com.wasir.droid.currencyexchange.data.database.entity.CurrencyRateEntity
 import com.wasir.droid.currencyexchange.domain.repository.ConfigurationRepo
@@ -30,7 +29,6 @@ class AppConfigSync @Inject constructor(private val configurationRepo: Configura
 
     fun updateConfig(configEntity: ConfigEntity) {
         this.config = configEntity
-        Log.d(TAG, "updateConfig: $config")
     }
 
     fun getConfig(): ConfigEntity? = config
@@ -46,7 +44,6 @@ class AppConfigSync @Inject constructor(private val configurationRepo: Configura
                 time = config!!.syncTime.toLong() * 1000
             }
             latestRateSyncHandler.postDelayed(this, time)
-            Log.d(TAG, "run: $time ${config?.syncTime}")
         }
     }
 
@@ -58,7 +55,6 @@ class AppConfigSync @Inject constructor(private val configurationRepo: Configura
                     .collect {
                         it.data?.let {
                             config = it
-                            Log.d(TAG, "loadConfiguration: $config")
                         }
                     }
             }

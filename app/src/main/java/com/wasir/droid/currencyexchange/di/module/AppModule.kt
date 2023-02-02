@@ -5,8 +5,8 @@ import android.text.InputFilter
 import com.wasir.droid.currencyexchange.App
 import com.wasir.droid.currencyexchange.data.scheduler.AppConfigSync
 import com.wasir.droid.currencyexchange.domain.repository.ConfigurationRepo
-import com.wasir.droid.currencyexchange.utils.DecimalLimiter
-import com.wasir.droid.currencyexchange.utils.FormatUtils
+import com.wasir.droid.currencyexchange.common.DecimalLimiter
+import com.wasir.droid.currencyexchange.common.FormatUtils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

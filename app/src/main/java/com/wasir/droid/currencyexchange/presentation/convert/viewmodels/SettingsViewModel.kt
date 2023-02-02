@@ -2,11 +2,12 @@ package com.wasir.droid.currencyexchange.presentation.convert.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wasir.droid.currencyexchange.domain.usecase.SettingsUseCase
-import com.wasir.droid.currencyexchange.utils.Resource
+import com.wasir.droid.currencyexchange.domain.usecase.settings.SettingsUseCase
+import com.wasir.droid.currencyexchange.common.Resource
+import com.wasir.droid.currencyexchange.domain.usecase.accounts.GetAccountUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -16,31 +17,20 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsUseCase: SettingsUseCase,
+    private val accountUseCases: GetAccountUseCases,
     private val dispatcherProvider: CoroutineDispatcherProvider
 ) : ViewModel() {
-    private val _addCurrencyStateFlow =
-        MutableStateFlow<Resource<String>>(Resource.Loading())
-    val addCurrencyStateFlow = _addCurrencyStateFlow.asStateFlow()
+    private val _addCurrencyStateFlow = MutableSharedFlow<Resource<String>>()
+    val addCurrencyStateFlow = _addCurrencyStateFlow.asSharedFlow()
 
-    private val _updateCommissionStateFlow =
-        MutableStateFlow<Resource<Boolean>>(Resource.Loading())
-    val updateCommissionStateFlow = _updateCommissionStateFlow.asStateFlow()
+    private val _updateCommissionStateFlow = MutableSharedFlow<Resource<Boolean>>()
+    val updateCommissionStateFlow = _updateCommissionStateFlow.asSharedFlow()
 
     fun addCurrency(currency: String) {
         viewModelScope.launch(dispatcherProvider.IO()) {
-            settingsUseCase.addCurrency(currency)
+            accountUseCases.addCurrency(currency)
                 .onEach { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            _addCurrencyStateFlow.value = Resource.Success(result.data)
-                        }
-                        is Resource.Error -> {
-                            _addCurrencyStateFlow.value = Resource.Error(result.message)
-                        }
-                        is Resource.Loading -> {
-                            _addCurrencyStateFlow.value = Resource.Loading(null)
-                        }
-                    }
+                    _addCurrencyStateFlow.emit(result)
                 }.launchIn(this)
         }
     }
@@ -49,17 +39,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch(dispatcherProvider.IO()) {
             settingsUseCase.updateCommission(updatedCommission)
                 .onEach { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            _updateCommissionStateFlow.value = Resource.Success(result.data)
-                        }
-                        is Resource.Error -> {
-                            _updateCommissionStateFlow.value = Resource.Error(result.message)
-                        }
-                        is Resource.Loading -> {
-                            _updateCommissionStateFlow.value = Resource.Loading(null)
-                        }
-                    }
+                    _updateCommissionStateFlow.emit(result)
                 }.launchIn(this)
         }
     }
@@ -70,18 +50,21 @@ class SettingsViewModel @Inject constructor(
                 .launchIn(this)
         }
     }
+
     fun updateFreeConversionPosition(freeConversionPosition: Int) {
         viewModelScope.launch(dispatcherProvider.IO()) {
             settingsUseCase.updateFreeConversionPosition(freeConversionPosition)
                 .launchIn(this)
         }
     }
+
     fun updateMaxFreeAmount(maxFreeAmount: Double) {
         viewModelScope.launch(dispatcherProvider.IO()) {
             settingsUseCase.updateMaxFreeAmount(maxFreeAmount)
                 .launchIn(this)
         }
     }
+
     fun updateNumberOfFreeConversion(totalNumber: Int) {
         viewModelScope.launch(dispatcherProvider.IO()) {
             settingsUseCase.updateNumberOfFreeConversion(totalNumber)

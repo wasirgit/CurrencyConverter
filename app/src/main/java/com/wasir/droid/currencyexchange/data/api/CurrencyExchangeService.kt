@@ -1,6 +1,5 @@
 package com.wasir.droid.currencyexchange.data.api
 
-import com.wasir.droid.currencyexchange.data.database.entity.CurrencyRateEntity
 import com.wasir.droid.currencyexchange.data.model.CurrencyRateResponse
 import retrofit2.http.GET
 import retrofit2.http.Query

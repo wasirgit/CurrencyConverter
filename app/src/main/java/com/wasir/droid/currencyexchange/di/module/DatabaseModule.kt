@@ -3,7 +3,7 @@ package com.wasir.droid.currencyexchange.di.module
 import android.content.Context
 import androidx.room.Room
 import com.wasir.droid.currencyexchange.data.database.CurrencyExchangeDatabase
-import com.wasir.droid.currencyexchange.data.database.dao.CurrencyExchangeDao
+import com.wasir.droid.currencyexchange.data.database.dao.RoomDatabaseDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +31,7 @@ object DatabaseModule {
     }
 
     @Provides
-    fun providePrayDao(currencyExchangeDatabase: CurrencyExchangeDatabase): CurrencyExchangeDao {
+    fun provideCurrencyExchangeDao(currencyExchangeDatabase: CurrencyExchangeDatabase): RoomDatabaseDao {
         return currencyExchangeDatabase.getCurrencyExchangeDao()
     }
 }

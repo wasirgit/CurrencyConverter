@@ -1,11 +1,12 @@
 package com.wasir.droid.currencyexchange.presentation.convert.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.wasir.droid.currencyexchange.data.model.Account
 import com.wasir.droid.currencyexchange.databinding.AccountRvItemBinding
-import com.wasir.droid.currencyexchange.utils.FormatUtils
+import com.wasir.droid.currencyexchange.common.FormatUtils
 
 class AccountsAdapter(private val mList: ArrayList<Account>, private val formatUtils: FormatUtils) :
     RecyclerView.Adapter<AccountsAdapter.ViewHolder>() {
@@ -13,7 +14,7 @@ class AccountsAdapter(private val mList: ArrayList<Account>, private val formatU
     class ViewHolder(private val binding: AccountRvItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bindData(account: Account, formatUtils: FormatUtils) {
-            binding.myBalanceTv.text =
+            binding.myBalanceAmountTv.text =
                 formatUtils.formatAmountWithOutSign(account.balance)
             binding.currencyTv.text = account.currencyCode
         }
@@ -33,7 +34,9 @@ class AccountsAdapter(private val mList: ArrayList<Account>, private val formatU
         return mList.size
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun addData(list: List<Account>) {
+        mList.clear()
         mList.addAll(list)
         notifyDataSetChanged()
     }
